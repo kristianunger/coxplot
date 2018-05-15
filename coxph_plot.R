@@ -25,19 +25,22 @@ cp.plot <- function(time, status, strat, col = c("lightseagreen","darkred","blue
   
   max.time <- max(time)
   
-  nr.hr <- data.frame()
+  nr.hr <- matrix("", ncol = length(c(seq(0,max.time,500),max.time)), nrow = length(lv.strat))
   for(f in 1:length(lv.strat))
   {
-  nr.hr.j <- c()
+  nr.hr.j <- rep("", length(c(seq(0,max.time,500),max.time)) )
+  it = 0
   for(j in c(seq(0,max.time,500),max.time))
   {
+    it = it +1
     time.j <- time[strat == lv.strat[f]]
     status.j <- status[strat == lv.strat[f]]
     nr.a <- summary(survfit(Surv(time.j, status.j) ~ 1), j)$n.risk
-    if(length(nr.a) > 0) nr.def <- nr.a
-    nr.hr.j <- c(nr.hr.j, nr.def)
+    if(length(nr.a) > 0) nr.def <- nr.a else nr.def <- ""
+    nr.hr.j[it] <- nr.def
+    nr.hr.j <- as.character(nr.hr.j)
   }
-  nr.hr <- rbind(nr.hr, nr.hr.j)
+  nr.hr[f,] <- nr.hr.j
   }
   
   
@@ -60,7 +63,7 @@ cp.plot <- function(time, status, strat, col = c("lightseagreen","darkred","blue
   legend(pos.bas,paste("baseline: ",lv.strat[baseline], sep=""), bty="n",cex = 2)
   for(m in 1:nrow(nr.hr))
   {
-  mtext(c(lv.strat[m],nr.hr[m,],""),1,at=c(-lndist,seq(0,max.time,500)[1:ncol(nr.hr)], max.time),padj=1+(2*m),cex=2, outer=F)
+  mtext(c(lv.strat[m],nr.hr[m,],""),1,at=c(-lndist,seq(0,max.time,500), max.time),padj=1+(2*m),cex=2, outer=F)
   }
   
   
