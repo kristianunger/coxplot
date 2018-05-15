@@ -1,4 +1,4 @@
-cp.plot <- function(time, status, strat, col = c("lightseagreen","darkred","blue","purple"), ep, main, baseline = 1, pos.hr = "bottomleft", pos.cols = "bottomright", pos.bas = "topright", lndist = 300){
+cp.plot <- function(time, status, strat, col = c("lightseagreen","darkred","blue","purple"), ep, main, baseline = 1, pos.hr = "bottomleft", pos.cols = "bottomright", pos.bas = "topright", lndist = 300, intv = 500){
   
   #######function for comprehensive plotting of cox proportional hazard analysis###
   c.df <- data.frame(time=time, status=status, strat = as.factor(strat))
@@ -25,12 +25,12 @@ cp.plot <- function(time, status, strat, col = c("lightseagreen","darkred","blue
   
   max.time <- max(time)+200
   
-  nr.hr <- matrix("", ncol = length(c(seq(0,max.time,500),max.time)), nrow = length(lv.strat))
+  nr.hr <- matrix("", ncol = length(c(seq(0,max.time,intv),max.time)), nrow = length(lv.strat))
   for(f in 1:length(lv.strat))
   {
-  nr.hr.j <- rep("", length(c(seq(0,max.time,500),max.time)) )
+  nr.hr.j <- rep("", length(c(seq(0,max.time,intv),max.time)) )
   it = 0
-  for(j in c(seq(0,max.time,500),max.time))
+  for(j in c(seq(0,max.time,intv),max.time))
   {
     it = it +1
     time.j <- time[strat == lv.strat[f]]
@@ -51,7 +51,7 @@ cp.plot <- function(time, status, strat, col = c("lightseagreen","darkred","blue
   legend(pos.bas,paste("baseline: ",lv.strat[baseline], sep=""), bty="n",cex = 2)
   for(m in 1:nrow(nr.hr))
   {
-  mtext(c(lv.strat[m],nr.hr[m,],""),1,at=c(-lndist,seq(0,max.time,500), max.time),padj=1+(2*m),cex=2, outer=F)
+  mtext(c(lv.strat[m],nr.hr[m,],""),1,at=c(-lndist,seq(0,max.time,intv), max.time),padj=1+(2*m),cex=2, outer=F)
   }
   
   
