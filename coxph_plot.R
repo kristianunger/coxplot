@@ -33,7 +33,9 @@ cp.plot <- function(time, status, strat, col = c("lightseagreen","darkred","blue
   {
     time.j <- time[strat == lv.strat[f]]
     status.j <- status[strat == lv.strat[f]]
-    nr.hr.j <- c(nr.hr.j, summary(survfit(Surv(time.j, status.j) ~ 1), j)$n.risk)
+    nr.a <- summary(survfit(Surv(time.j, status.j) ~ 1), j)$n.risk
+    if(length(nr.a) > 0) nr.def <- nr.a
+    nr.hr.j <- c(nr.hr.j, nr.def)
   }
   nr.hr <- rbind(nr.hr, nr.hr.j)
   }
