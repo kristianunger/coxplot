@@ -1,6 +1,6 @@
 cp.plot <- function(time, status, strat, col = c("lightseagreen","darkred","blue","purple"), ep, main, baseline = 1, pos.hr = "bottomleft", pos.cols = "bottomright", pos.bas = "topright"){
   
-  #######function for comprehensive plotting of cox proportional hazard analysis
+  #######function for comprehensive plotting of cox proportional hazard analysis###
   c.df <- data.frame(time=time, status=status, strat = as.factor(strat))
   
   bl <- levels(c.df$strat)[1]
