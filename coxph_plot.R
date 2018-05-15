@@ -1,4 +1,4 @@
-cp.plot <- function(time, status, strat, col = c("lightseagreen","darkred","blue","purple"), ep, main, baseline = 1, pos.hr = "bottomleft", pos.cols = "bottomright", pos.bas = "topright"){
+cp.plot <- function(time, status, strat, col = c("lightseagreen","darkred","blue","purple"), ep, main, baseline = 1, pos.hr = "bottomleft", pos.cols = "bottomright", pos.bas = "topright", lndist = 300){
   
   #######function for comprehensive plotting of cox proportional hazard analysis###
   c.df <- data.frame(time=time, status=status, strat = as.factor(strat))
@@ -38,8 +38,19 @@ cp.plot <- function(time, status, strat, col = c("lightseagreen","darkred","blue
   nr.hr <- rbind(nr.hr, nr.hr.j)
   }
   
+  
+  for(k in 1:nrow(nr.hr))
+  {
+    nr.hr.k <- nr.hr[k,]
+    min.nr.hr.k <- which.min(nr.hr.k)
+    nr.hr.k[(min.nr.hr.k+1):length(nr.hr.k)] <- ""
+    nr.hr[k,] <- nr.hr.k
+  }
+  
+  
 
   par(oma=c(5,3,2,2))
+  par(mar=c(5,3,2,2))
   
   plot(survfit(Surv(time, status) ~ c.df$strat), mark.time = T, lwd = 6, mark="|", cex=1.5, col=col,ylab=ep, xlab="", cex.axis=2, cex.lab=2,xmax=max.time, main=main, cex.main=2, xlim=c(0,3100))
   legend(pos.hr,c(paste("HR:",hazard_r," (95% CI ",conf.int,")",sep=""),paste("p=",p.val,sep="")),bty = "n",cex=2)
@@ -47,7 +58,7 @@ cp.plot <- function(time, status, strat, col = c("lightseagreen","darkred","blue
   legend(pos.bas,paste("baseline: ",lv.strat[baseline], sep=""), bty="n",cex = 2)
   for(m in 1:nrow(nr.hr))
   {
-  mtext(c(lv.strat[m],nr.hr[m,],""),1,at=c(-300,seq(0,max.time,500)[1:ncol(nr.hr)], max.time),padj=1+(2*m),cex=2, outer=F)
+  mtext(c(lv.strat[m],nr.hr[m,],""),1,at=c(-lndist,seq(0,max.time,500)[1:ncol(nr.hr)], max.time),padj=1+(2*m),cex=2, outer=F)
   }
   
   
