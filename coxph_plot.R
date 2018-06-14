@@ -1,4 +1,4 @@
-cp.plot <- function(time, status, strat, col = c("lightseagreen","darkred","blue","purple"), ep, main, baseline = 1, pos.hr = "bottomleft", pos.cols = "bottomright", pos.bas = "topright", lndist = 300, intv = 500){
+cp.plot <- function(time, status, strat, col = c("lightseagreen","darkred","blue","purple"), ep, main, baseline = 1, pos.hr = "bottomleft", pos.cols = "bottomright", pos.bas = "topright", lndist = 300, intv = 500, roundfac =5){
   
   #######function for comprehensive plotting of cox proportional hazard analysis###
   c.df <- data.frame(time=time, status=status, strat = as.factor(strat))
@@ -10,7 +10,7 @@ cp.plot <- function(time, status, strat, col = c("lightseagreen","darkred","blue
   
   m1 <- coxph(Surv(time, status) ~ strat)
   s.m1 <- summary(m1)
-  p.val <- round(s.m1$sctest[3],5)
+  p.val <- round(s.m1$sctest[3],roundfac)
   
   if(length(lv.strat) == 2) conf.int <- paste(c(round(s.m1$conf.int[3], 2), round(s.m1$conf.int[4], 2)), collapse = "-") else {
   conf.int <- c()
