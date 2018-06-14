@@ -1,4 +1,4 @@
-cp.plot <- function(time, status, strat, col = c("lightseagreen","darkred","blue","purple"), ep, main, baseline = 1, pos.hr = "bottomleft", pos.cols = "bottomright", pos.bas = "topright", lndist = 300, intv = 500, roundfac =4){
+cp.plot <- function(time, status, strat, col = c("lightseagreen","darkred","blue","purple"), ep, main, baseline = 1, pos.hr = "bottomleft", pos.cols = "bottomright", pos.bas = "topright", lndist = 300, intv = 500, roundfac =5){
   
   #######function for comprehensive plotting of cox proportional hazard analysis###
   c.df <- data.frame(time=time, status=status, strat = as.factor(strat))
