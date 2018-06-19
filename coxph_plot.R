@@ -1,14 +1,20 @@
-cp.plot <- function(time, status, strat, col = c("lightseagreen","darkred","blue","purple"), ep, main, baseline = 1, pos.hr = "bottomleft", pos.cols = "bottomright", pos.bas = "topright", lndist = 300, intv = 500, roundfac =5){
+cp.plot <- function(time, status, strat, col = c("lightseagreen","darkred","blue","purple"), ep, main, baseline = 1, pos.hr = "bottomleft", pos.cols = "bottomright", pos.bas = "topright", lndist = 300, intv = 500, roundfac = 5, max.time.add = 200){
   
   #######function for comprehensive plotting of cox proportional hazard analysis###
   c.df <- data.frame(time=time, status=status, strat = as.factor(strat))
   
-  bl <- levels(c.df$strat)[1]
+  strat.t <- c.df$strat
+  
+  bl <- levels(strat.t)[baseline]
+  
+  
+  strat.t <- factor(strat.t, levels = unique(c(as.character(strat.t[strat.t==bl]),as.character(strat.t[!strat.t==bl]))))
+  
+  c.df$strat <- strat.t
   
   lv.strat <- levels(c.df$strat)
   
-  
-  m1 <- coxph(Surv(time, status) ~ strat)
+  m1 <- coxph(Surv(time, status) ~ c.df$strat)
   s.m1 <- summary(m1)
   p.val <- round(s.m1$sctest[3],roundfac)
   
@@ -23,7 +29,7 @@ cp.plot <- function(time, status, strat, col = c("lightseagreen","darkred","blue
   
   if(length(lv.strat)>2) hazard_r <- abs(round(s.m1$coefficients[,2],2)) else hazard_r <- abs(round(s.m1$coefficients[2],2))
   
-  max.time <- max(time)+200
+  max.time <- max(time) + max.time.add
   
   nr.hr <- matrix("", ncol = length(c(seq(0,max.time,intv),max.time)), nrow = length(lv.strat))
   for(f in 1:length(lv.strat))
