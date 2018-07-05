@@ -1,23 +1,3 @@
-
-strat = quad
-col = c("lightseagreen","darkred","blue","purple")
-ep = "endpoint"
-main =""
-baseline = 1
-pos.hr = "bottomleft"
-pos.cols = "bottomright"
-pos.bas = "topright"
-lndist = 300
-intv = 500
-roundfac = 5
-max.time.add = 200
-med.surv = T
-med.surv.pos = 0.1
-med.surv.x = 0
-cex.med.surv = 1.5
-med.surv.round = 2
-  
-
 cp.plot <- function(time, status, strat, col = c("lightseagreen","darkred","blue","purple"), ep = "endpoint", main ="", baseline = 2, pos.hr = "bottomleft", pos.cols = "bottomright", pos.bas = "topright", lndist = 300, intv = 500, roundfac = 5, max.time.add = 200, med.surv = T, med.surv.pos = 0.1, med.surv.x = 0, cex.med.surv = 1.5, med.surv.round = 2, cex.legend = 1.5){
   
   #######function for comprehensive plotting of cox proportional hazard analysis###
