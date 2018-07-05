@@ -1,3 +1,23 @@
+
+strat = quad
+col = c("lightseagreen","darkred","blue","purple")
+ep = "endpoint"
+main =""
+baseline = 1
+pos.hr = "bottomleft"
+pos.cols = "bottomright"
+pos.bas = "topright"
+lndist = 300
+intv = 500
+roundfac = 5
+max.time.add = 200
+med.surv = T
+med.surv.pos = 0.1
+med.surv.x = 0
+cex.med.surv = 1.5
+med.surv.round = 2
+  
+
 cp.plot <- function(time, status, strat, col = c("lightseagreen","darkred","blue","purple"), ep = "endpoint", main ="", baseline = 1, pos.hr = "bottomleft", pos.cols = "bottomright", pos.bas = "topright", lndist = 300, intv = 500, roundfac = 5, max.time.add = 200, med.surv = T, med.surv.pos = 0.1, med.surv.x = 0, cex.med.surv = 1.5, med.surv.round = 2){
   
   #######function for comprehensive plotting of cox proportional hazard analysis###
@@ -21,15 +41,27 @@ cp.plot <- function(time, status, strat, col = c("lightseagreen","darkred","blue
   
   fit <- summary(survfit(Surv(time, status) ~ c.df$strat))
   
+  strats <- lv.strat[!lv.strat==lv.strat[baseline]]
   
   if(length(lv.strat) == 2) conf.int <- paste(c(round(s.m1$conf.int[3], 2), round(s.m1$conf.int[4], 2)), collapse = "-") else {
   conf.int <- c()
-  for(c in 1:(length(lv.strat)-1))
+    for(c in 1:(length(lv.strat)-1))
   {
   conf.int.c <- paste(c(round(s.m1$conf.int[c,3], 2), round(s.m1$conf.int[c,4], 2)), collapse = "-")
   conf.int <- c(conf.int,conf.int.c)
+  
   }
   }
+  
+  pvs <- c()
+  for(s in 1:length(strats))
+  {
+    strat.s <- strats[s]
+    c.s <- coxph(Surv(time[c.df$strat%in%c(bl, strat.s)], status[c.df$strat%in%c(bl, strat.s)]) ~ c.df$strat[c.df$strat%in%c(bl, strat.s)])
+    s.c.s <- summary(c.s)
+    pvs <- c(pvs, round(s.c.s$sctest[3], roundfac))
+  }
+  
   
   if(length(lv.strat)>2) hazard_r <- abs(round(s.m1$coefficients[,2],2)) else hazard_r <- abs(round(s.m1$coefficients[2],2))
   
@@ -56,7 +88,7 @@ cp.plot <- function(time, status, strat, col = c("lightseagreen","darkred","blue
   
   
   plot(survfit(Surv(time, status) ~ c.df$strat), mark.time = T, lwd = 6, mark="|", cex=1.5, col=col,ylab=ep, xlab="", cex.axis=2, cex.lab=2,xmax=max.time, main=main, cex.main=2, xlim=c(0,max.time))
-  legend(pos.hr,c(paste("HR:",hazard_r," (95% CI ",conf.int,")",sep=""),paste("p=",p.val,sep="")),bty = "n",cex=2)
+  legend(pos.hr,c(paste(strats," HR:",hazard_r," (95% CI ",conf.int,"), p: ",pvs,sep=""),paste("p=",p.val,sep="")),bty = "n",cex=2)
   legend(pos.cols,c(lv.strat),col=col,pch="-", bty="n",cex = 2)
   legend(pos.bas,paste("baseline: ",lv.strat[1], sep=""), bty="n",cex = 2)
   for(m in 1:nrow(nr.hr))
