@@ -1,4 +1,4 @@
-cp.plot <- function(time, status, strat, col = c("lightseagreen","darkred","blue","purple"), ep = "endpoint", main ="", baseline = 2, pos.hr = "bottomleft", pos.cols = "bottomright", pos.bas = "topright", lndist = 300, intv = 500, roundfac = 5, max.time.add = 200, med.surv = T, med.surv.pos = 0.1, med.surv.x = 0, cex.med.surv = 1.5, med.surv.round = 2, cex.legend = 1.5){
+cp.plot <- function(time, status, strat, col = c("lightseagreen","darkred","blue","purple"), ep = "endpoint", main ="", baseline = 2, pos.hr = "bottomleft", pos.cols = "bottomright", pos.bas = "topright", lndist = 300, intv = 500, roundfac = 5, max.time.add = 200, med.surv = T, med.surv.pos = 0.1, med.surv.x = 0, cex.med.surv = 1.5, med.surv.round = 2, cex.legend = 1.5, out.file = T, out.file.name = "coxph.out.txt"){
   
   #######function for comprehensive plotting of cox proportional hazard analysis###
   c.df <- data.frame(time=time, status=status, strat = as.factor(strat))
@@ -42,6 +42,25 @@ cp.plot <- function(time, status, strat, col = c("lightseagreen","darkred","blue
     pvs <- c(pvs, round(s.c.s$sctest[3], roundfac))
   }
   
+  ######calculate all possible log-ranks
+  cbs <- combn(lv.strat, m = 2)
+  
+  conf.ints <- c()
+  hzds <- c()
+  pvds <- c()
+  for(d in 1:ncol(cbs))
+  {
+    cp.d <- coxph(Surv(time[c.df$strat%in%cbs[,d]], status[c.df$strat%in%cbs[,d]]) ~ as.character(c.df$strat[c.df$strat%in%cbs[,d]]))
+    s.dp.d <- summary(cp.d)
+    conf.int.d <- paste(c(round(s.dp.d$conf.int[3], 2), round(s.dp.d$conf.int[4], 2)), collapse = "-")
+    conf.ints <- c(conf.ints, conf.int.d)
+    hzds <- c(hzds, round(s.dp.d$conf.int[1], 2))
+    pvds <- c(pvds, round(s.dp.d$sctest[3], roundfac))
+  }
+  
+  out.tab <- data.frame(comparison = paste(cbs[1,],cbs[2,], sep ="-"), p.value = pvds, hazard.ratio = hzds, CI95 = conf.ints)
+  
+  if(out.file) write.table(out.tab, file = out.file.name, sep = "\t", row.names = F, quote = F)
   
   if(length(lv.strat)>2) hazard_r <- abs(round(s.m1$coefficients[,2],2)) else hazard_r <- abs(round(s.m1$coefficients[2],2))
   
