@@ -58,7 +58,27 @@ cp.plot <- function(time, status, strat, col = c("lightseagreen","darkred","blue
     pvds <- c(pvds, round(s.dp.d$sctest[3], roundfac))
   }
   
-  out.tab <- data.frame(comparison = paste(cbs[1,],cbs[2,], sep ="-"), p.value = pvds, hazard.ratio = hzds, CI95 = conf.ints)
+  out.tab <- data.frame(comparison = paste(cbs[1,],cbs[2,], sep ="-"), p.value = pvds, hazard.ratio = hzds, CI95 = conf.ints, direction = rep("flip", length(pvds)))
+  
+  
+  cbs.rev <- rbind(cbs[2,],cbs[1,])
+  conf.ints.rev <- c()
+  hzds.rev <- c()
+  pvds.rev <- c()
+  for(d in 1:ncol(cbs.rev))
+  {
+    cp.d.rev <- coxph(Surv(time[c.df$strat%in%cbs.rev[,d]], status[c.df$strat%in%cbs.rev[,d]]) ~ as.character(c.df$strat[c.df$strat%in%cbs.rev[,d]]))
+    s.dp.d.rev <- summary(cp.d.rev)
+    conf.int.d.rev <- paste(c(round(s.dp.d.rev$conf.int[3], 2), round(s.dp.d.rev$conf.int[4], 2)), collapse = "-")
+    conf.ints.rev <- c(conf.ints.rev, conf.int.d.rev)
+    hzds.rev <- c(hzds.rev, round(s.dp.d.rev$conf.int[1], 2))
+    pvds.rev <- c(pvds.rev, round(s.dp.d.rev$sctest[3], roundfac))
+  }
+  
+  out.tab.rev <- data.frame(comparison = paste(cbs.rev[1,],cbs.rev[2,], sep ="-"), p.value = pvds.rev, hazard.ratio = hzds.rev, CI95 = conf.ints.rev, direction = rep("flop", length(pvds)))
+  
+  out.tab <- rbind(out.tab, out.tab.rev)
+  
   
   if(out.file) write.table(out.tab, file = out.file.name, sep = "\t", row.names = F, quote = F)
   
