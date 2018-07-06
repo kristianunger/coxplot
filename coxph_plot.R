@@ -50,7 +50,8 @@ cp.plot <- function(time, status, strat, col = c("lightseagreen","darkred","blue
   pvds <- c()
   for(d in 1:ncol(cbs))
   {
-    cp.d <- coxph(Surv(time[c.df$strat%in%cbs[,d]], status[c.df$strat%in%cbs[,d]]) ~ as.character(c.df$strat[c.df$strat%in%cbs[,d]]))
+    sts <- factor(as.character(c.df$strat[c.df$strat%in%cbs[,d]]), levels = cbs[,d])
+    cp.d <- coxph(Surv(time[c.df$strat%in%cbs[,d]], status[c.df$strat%in%cbs[,d]]) ~ sts)
     s.dp.d <- summary(cp.d)
     conf.int.d <- paste(c(round(s.dp.d$conf.int[3], 2), round(s.dp.d$conf.int[4], 2)), collapse = "-")
     conf.ints <- c(conf.ints, conf.int.d)
@@ -67,7 +68,8 @@ cp.plot <- function(time, status, strat, col = c("lightseagreen","darkred","blue
   pvds.rev <- c()
   for(d in 1:ncol(cbs.rev))
   {
-    cp.d.rev <- coxph(Surv(time[c.df$strat%in%cbs.rev[,d]], status[c.df$strat%in%cbs.rev[,d]]) ~ as.character(c.df$strat[c.df$strat%in%cbs.rev[,d]]))
+    sts.rev <- factor(as.character(c.df$strat[c.df$strat%in%cbs.rev[,d]]), levels = cbs.rev[,d])
+    cp.d.rev <- coxph(Surv(time[c.df$strat%in%cbs.rev[,d]], status[c.df$strat%in%cbs.rev[,d]]) ~ sts.rev)
     s.dp.d.rev <- summary(cp.d.rev)
     conf.int.d.rev <- paste(c(round(s.dp.d.rev$conf.int[3], 2), round(s.dp.d.rev$conf.int[4], 2)), collapse = "-")
     conf.ints.rev <- c(conf.ints.rev, conf.int.d.rev)
